@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { CURRENCIES } from "./api/types/quote";
 import HeaderApp from "./components/header";
 import { useDailyCurrencies } from "./hooks/currencies";
-import axios from "axios";
+import { CURRENCY_PAIRS } from "./api/types/quote";
 
 export default function HomePage() {
   // Estados para o formulário de conversão
@@ -12,10 +12,45 @@ export default function HomePage() {
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("BRL");
   const [amount, setAmount] = useState("1.00");
+  const quickPairs = [
+    {
+      pair: "USD/BRL",
+      name: "Dólar Americano / Real Brasileiro",
+      value: "5.25",
+      change: "+0.02",
+      up: true,
+    },
+    {
+      pair: "EUR/BRL",
+      name: "Euro / Real Brasileiro",
+      value: "6.10",
+      change: "-0.01",
+      up: false,
+    },
+    {
+      pair: "BTC/USD",
+      name: "Bitcoin / Dólar Americano",
+      value: "30000.00",
+      change: "+500.00",
+      up: true,
+    },
+    {
+      pair: "ETH/USD",
+      name: "Ethereum / Dólar Americano",
+      value: "2000.00",
+      change: "-50.00",
+      up: false,
+    },
+  ];
 
   const { data, isLoading, isFetching } = useDailyCurrencies(from, to, "1");
-  const result = data?.[0]?.bid ? (Number(data[0].bid) * Number(amount)).toFixed(2) : null;
+  const result = data?.[0]?.bid
+    ? (Number(data[0].bid) * Number(amount)).toFixed(2)
+    : null;
 
+  const availableTo = [...CURRENCY_PAIRS]
+    .filter((pair) => pair.startsWith(`${from}-`))
+    .map((pair) => pair.split("-")[1]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500/30">
@@ -72,11 +107,10 @@ export default function HomePage() {
                   <select
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 font-medium focus:outline-none focus:border-teal-500 transition appearance-none cursor-pointer"
                   >
-                    {Object.entries(CURRENCIES).map(([sigla, nome]) => (
-                      <option key={sigla} value={sigla}>
-                        {sigla} - {nome}
+                    {[...CURRENCIES].map((c) => (
+                      <option key={c} value={c}>
+                        {c}
                       </option>
                     ))}
                   </select>
@@ -87,14 +121,10 @@ export default function HomePage() {
                   <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                     Para (Destino)
                   </label>
-                  <select
-                    value={to}
-                    onChange={(e) => setTo(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 font-medium focus:outline-none focus:border-teal-500 transition appearance-none cursor-pointer"
-                  >
-                    {Object.entries(CURRENCIES).map(([sigla, nome]) => (
+                  <select value={to} onChange={(e) => setTo(e.target.value)}>
+                    {availableTo.map((sigla) => (
                       <option key={sigla} value={sigla}>
-                        {sigla} - {nome}
+                        {sigla}
                       </option>
                     ))}
                   </select>
@@ -140,8 +170,7 @@ export default function HomePage() {
                 </div>
                 <div className="text-right sm:text-right w-full sm:w-auto">
                   <p className="text-xs text-slate-500">
-                    Taxa de câmbio comercial atual: 1 {from} = {result}{" "}
-                    {to}
+                    Taxa de câmbio comercial atual: 1 {from} = {result} {to}
                   </p>
                 </div>
               </div>
