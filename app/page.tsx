@@ -1,15 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { CURRENCIES, CURRENCY_PAIRS, ModelQuote } from "./api/types/quote";
+import { CURRENCIES, CURRENCY_PAIRS } from "./api/types/quote";
 import HeaderApp from "./components/header";
 import { useDailyCurrencies } from "./hooks/currencies";
-
-// Interface para os itens do histórico, herdando todos os dados da cotação
-export interface HistoryEntry extends ModelQuote {
-  requestedAmount: number;
-  calculatedResult: number;
-}
+import { TriangleAlert, Coins } from "lucide-react";
+import { HistoryEntry } from "./api/types/quote";
 
 export default function HomePage() {
   // Estados para o formulário de conversão
@@ -19,7 +15,7 @@ export default function HomePage() {
 
   // Estado do Histórico
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  
+
   // Ref para controlar o último timestamp e evitar duplicações no histórico
   const lastTimestampRef = useRef<string | null>(null);
 
@@ -65,7 +61,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500/30">
+    <div className="min-h-screen bg-smoke-abyss text-slate-100 font-sans antialiased selection:bg-teal-500/30">
       {/* HEADER / NAVBAR */}
       <HeaderApp />
 
@@ -85,21 +81,37 @@ export default function HomePage() {
         </section>
 
         {/* GRID PRINCIPAL: CONVERSOR + HISTÓRICO */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start ">
           {/* CARD DO CONVERSOR (OCUPA 2 COLUNAS NO DESKTOP) */}
-          <div className="lg:col-span-2 bg-slate-900/50 border border-slate-900 rounded-2xl p-6 md:p-8 backdrop-blur shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-teal-500 to-pink-500 opacity-70" />
+          <div className="lg:col-span-2 bg-slate-950/80 border border-slate-900 rounded-2xl p-6 md:p-8 backdrop-blur shadow-xl relative overflow-hidden group">
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-teal-500 to-pink-500 opacity-70" />
 
-            <h2 className="text-lg font-semibold text-slate-200 mb-6 flex items-center gap-2">
-              <span>💱</span> Calculadora de Conversão
-            </h2>
+            {/* CONTAINER DO HEADER (TÍTULO + AVISO) */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+              {/* TÍTULO PRINCIPAL */}
+              <h2 className="text-lg font-semibold text-slate-200 flex items-center gap-2">
+                <Coins className="w-6 h-6 text-yellow-500 shrink-0" />
+                Calculadora de Conversão
+              </h2>
 
+              {/* AVISO LATERAL */}
+              <div className="flex items-start md:items-center gap-2 text-xs">
+                <TriangleAlert className="w-4 h-4 text-pink-500 animate-bounce opacity-70 shrink-0 mt-0.5 md:mt-0" />
+                <span className="text-pink-500/80 leading-tight">
+                  Algumas moedas podem não estar disponíveis para conversão
+                  direta.
+                </span>
+              </div>
+            </div>
+
+            {/* ... INPUT ... */}
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 {/* INPUT QUANTIDADE */}
                 <div className="col-span-1 md:col-span-2 space-y-2">
-                  <label className="text-xs font-semibold text-slate-400">Valor</label>
+                  <label className="text-xs font-semibold text-slate-400">
+                    Valor
+                  </label>
                   <input
                     type="number"
                     value={amount}
@@ -111,28 +123,36 @@ export default function HomePage() {
 
                 {/* SELECT ORIGEM */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-400">De</label>
+                  <label className="text-xs font-semibold text-slate-400">
+                    De
+                  </label>
                   <select
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:border-teal-500 transition cursor-pointer appearance-none outline-none"
                   >
                     {[...CURRENCIES].map((c) => (
-                      <option key={c} value={c} className="bg-slate-900">{c}</option>
+                      <option key={c} value={c} className="bg-slate-900">
+                        {c}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 {/* SELECT DESTINO */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-400">Para</label>
+                  <label className="text-xs font-semibold text-slate-400">
+                    Para
+                  </label>
                   <select
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:border-teal-500 transition cursor-pointer appearance-none outline-none"
                   >
                     {availableTo.map((c) => (
-                      <option key={c} value={c} className="bg-slate-900">{c}</option>
+                      <option key={c} value={c} className="bg-slate-900">
+                        {c}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -141,10 +161,14 @@ export default function HomePage() {
               {/* FEEDBACK DE LOADING / FETCHING */}
               <div className="text-slate-100 h-6 flex items-center">
                 {isLoading && (
-                  <p className="text-sm text-teal-500 animate-pulse">Carregando cotação...</p>
+                  <p className="text-sm text-teal-500 animate-pulse">
+                    Carregando cotação...
+                  </p>
                 )}
                 {isFetching && !isLoading && (
-                  <p className="text-sm text-slate-400 animate-pulse">Atualizando...</p>
+                  <p className="text-sm text-slate-400 animate-pulse">
+                    Atualizando...
+                  </p>
                 )}
               </div>
             </div>
@@ -153,17 +177,23 @@ export default function HomePage() {
             {result && currentQuote && (
               <div className="mt-4 pt-6 border-t border-slate-900/80 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/30 p-4 rounded-xl">
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Resultado Obtido</p>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider">
+                    Resultado Obtido
+                  </p>
                   <p className="text-2xl font-bold text-teal-400 mt-1">
                     {amount} {from} ={" "}
                     <span className="text-white">
-                      {Number(result).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                      {Number(result).toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                      })}
                     </span>{" "}
                     {to}
                   </p>
                 </div>
                 <div className="text-right sm:text-right w-full sm:w-auto">
-                  <p className="text-xs text-slate-500">Taxa comercial: 1 {from} = {currentQuote.bid} {to}</p>
+                  <p className="text-xs text-slate-500">
+                    Taxa comercial: 1 {from} = {currentQuote.bid} {to}
+                  </p>
                 </div>
               </div>
             )}
@@ -172,13 +202,13 @@ export default function HomePage() {
           {/* HISTÓRICO DE REQUISIÇÕES (OCUPA 1 COLUNA NO DESKTOP) */}
           <div className="bg-slate-900/50 border border-slate-900 rounded-2xl p-6 backdrop-blur shadow-xl h-full min-h-[400px] flex flex-col relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-pink-500 to-teal-500 opacity-70" />
-            
+
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
                 <span>📜</span> Histórico de Conversões
               </h3>
               {history.length > 0 && (
-                <button 
+                <button
                   onClick={() => setHistory([])}
                   className="text-xs text-slate-500 hover:text-pink-500 transition"
                 >
@@ -191,7 +221,20 @@ export default function HomePage() {
               {history.length === 0 ? (
                 <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center space-y-4">
                   <div className="p-4 bg-slate-950/50 rounded-full text-teal-500/50 border border-slate-800/50">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 3v18h18" />
+                      <path d="m19 9-5 5-4-4-3 3" />
+                    </svg>
                   </div>
                   <p className="text-xs text-slate-500 max-w-[200px] leading-relaxed">
                     Seu histórico de requisições aparecerá aqui automaticamente.
@@ -199,31 +242,46 @@ export default function HomePage() {
                 </div>
               ) : (
                 history.map((item, index) => (
-                  <div key={index} className="bg-slate-950/40 border border-slate-800 rounded-lg p-3 hover:border-slate-700 transition-colors">
+                  <div
+                    key={index}
+                    className="bg-slate-950/40 border border-slate-800 rounded-lg p-3 hover:border-slate-700 transition-colors"
+                  >
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-bold text-white">
                         {item.requestedAmount} {item.code}
                       </span>
                       <span className="text-slate-500 text-xs">→</span>
                       <span className="text-sm font-bold text-teal-400">
-                        {item.calculatedResult.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} {item.codein}
+                        {item.calculatedResult.toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                        })}{" "}
+                        {item.codein}
                       </span>
                     </div>
-                    
+
                     {/* Informações extras da API */}
                     <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px] text-slate-500 mt-2 pt-2 border-t border-slate-800/60">
                       <span>Data:</span>
-                      <span className="text-slate-400 text-right">{formatApiDate(item.create_date)}</span>
-                      
+                      <span className="text-slate-400 text-right">
+                        {formatApiDate(item.create_date)}
+                      </span>
+
                       <span>Taxa (Bid):</span>
-                      <span className="text-slate-400 text-right">{Number(item.bid).toFixed(4)}</span>
-                      
+                      <span className="text-slate-400 text-right">
+                        {Number(item.bid).toFixed(4)}
+                      </span>
+
                       <span>Máxima / Mínima:</span>
-                      <span className="text-slate-400 text-right">{item.high} / {item.low}</span>
-                      
+                      <span className="text-slate-400 text-right">
+                        {item.high} / {item.low}
+                      </span>
+
                       <span>Variação:</span>
-                      <span className={`text-right font-medium ${Number(item.pctChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {Number(item.pctChange) >= 0 ? '▲' : '▼'} {item.pctChange}%
+                      <span
+                        className={`text-right font-medium ${Number(item.pctChange) >= 0 ? "text-green-400" : "text-red-400"}`}
+                      >
+                        {Number(item.pctChange) >= 0 ? "▲" : "▼"}{" "}
+                        {item.pctChange}%
                       </span>
                     </div>
                   </div>
@@ -231,7 +289,6 @@ export default function HomePage() {
               )}
             </div>
           </div>
-
         </div>
       </main>
     </div>
