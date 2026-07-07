@@ -1,23 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from 'axios';
-const BASE_URL = "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL"
+import { ModelQuote } from "../types/quote";
+import { validateParams } from "../../validators/general";
+
+// Url base da API.
+// Há variações, mas esta é a raiz para qualquer endpoint.
+const BASE_URL = "https://economia.awesomeapi.com.br/json/"
 
 
-export async function GET(request: NextRequest) {
+// Últimas cotações das moedas selecionadas.
+// 3 parâmetros: from, to e days (opcional, default 1, máximo 360).
+export async function GET(request: NextRequest): Promise<NextResponse> {
   const apiKey = process.env.API_KEY;
 
   if (!apiKey) {
     return NextResponse.json({ error: "Erro: sem chave API" }, { status: 500 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const from = searchParams.get('from')?.toUpperCase() || 'USD';
+  const to = searchParams.get('to')?.toUpperCase() || 'BRL';
+  const days = searchParams.get('days') || '1';
+
+  if (!validateParams(from, to, days).valid) {
+    return NextResponse.json({ error: validateParams(from, to, days).error }, { status: 404 });
+  }
+
   try {
-    const response = await axios.get(BASE_URL, {
+    const url = `${BASE_URL}daily/${from}-${to}/${days}`;
+    const response = await axios.get(url, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
       },
     });
 
-    const data = response.data;
+    // Formato esperado.
+    const data: ModelQuote[] = response.data;
     console.log("Dados recebidos da API:", data);
     return NextResponse.json(data);
   } catch (error) {
