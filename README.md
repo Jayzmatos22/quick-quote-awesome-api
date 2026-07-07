@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💱 Quick Quote
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-First, run the development server:
+Aplicação fullstack moderna para conversão de moedas em tempo real. Construída com uma interface elegante baseada em *glassmorphism* e um fundo dinâmico, a aplicação consome dados da **AwesomeAPI** para fornecer cotações de moedas FIAT, criptomoedas e metais preciosos de forma rápida, segura e responsiva.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 O Objetivo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Desenvolver um conversor de moedas que vai além de uma simples calculadora. O grande diferencial desta aplicação é o **histórico de requisições em tempo real**, que captura automaticamente cada conversão feita pelo usuário. Ele exibe dados detalhados da API, como data exata, máxima, mínima e variação percentual — tudo blindado por filtros dinâmicos que impedem a seleção de pares de moedas inválidos, garantindo a integridade dos dados e a melhor experiência de usuário.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Funcionalidades
 
-To learn more about Next.js, take a look at the following resources:
+* **Conversão em Tempo Real:** Cotações atualizadas de diversas moedas e ativos globais.
+* **Filtros Dinâmicos (Double-Check):** As opções de moeda de destino se adaptam automaticamente com base na moeda de origem selecionada, evitando requisições falhas.
+* **Histórico Enriquecido:** Registro automático das últimas conversões, exibindo detalhes extraídos da API:
+    * Data e hora exata da cotação.
+    * Valor máximo e mínimo do dia.
+    * Variação percentual com indicadores visuais de tendência (alta/baixa).
+* **UI/UX Moderna:** Design escuro focado na legibilidade, com efeitos de blur (*backdrop-filter*), bordas neon sutis e iconografia interativa.
+* **Totalmente Responsivo:** Layout modular que se adapta fluidamente entre mobile, tablet e desktop.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Tela Principal (Conversor e Histórico)
+Interface escura com a calculadora de conversão à esquerda e o histórico de cotações atualizado dinamicamente à direita.
 
-## Deploy on Vercel
+### Tela Principal do Quick Quote
+<img src="public/image/quick-quote.png" alt="Tela Principal" />
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Layout Responsivo (Mobile)
+<img src="public//image/quick-quote-mobile.png" alt="Tela mobile" />
+
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+* **Framework:** Next.js (App Router)
+* **Biblioteca UI:** React
+* **Linguagem:** TypeScript
+* **Estilização:** Tailwind CSS
+* **Ícones:** Lucide React
+* **Integração de Dados:** AwesomeAPI (Câmbio)
+
+---
+
+## ⚙️ Configuração e Execução
+
+### Pré-requisitos
+* [Node.js](https://nodejs.org/) (versão 18 ou superior)
+* Gerenciador de pacotes (NPM, Yarn ou PNPM)
+
+### Variáveis de Ambiente
+Este projeto requer uma chave de API configurada. Na raiz do projeto, crie um arquivo chamado `.env.local` e adicione a sua chave da AwesomeAPI:
+
+```env
+API_KEY=sua_chave_aqui
