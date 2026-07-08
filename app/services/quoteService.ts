@@ -5,7 +5,7 @@ import { validateClientParams } from "./../validators/client";
 
 
 const apiClient = axios.create({
-  timeout: 10000, // 10 segundos
+  timeout: 10000,
 });
 
 export const quoteService = {
